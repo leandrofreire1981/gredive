@@ -54,7 +54,7 @@ export default function Form() {
         {db.items.map((r, i) => {
             if(r.type === 'select')
                 return(
-                    <div>
+                    <div key = {i + 'a'}>
                         <label>{r.label}</label>
                         <select onChange={handleOnSelect} name={r.name}>
                             <option value='Seleccione un pais'>Seleccione un pais</option>
