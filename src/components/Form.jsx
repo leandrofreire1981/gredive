@@ -1,15 +1,21 @@
 import React, { useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import db from '../db.json'
+import { getData } from '../redux/action'
+import './form.scss'
+import { SaveDb } from './SaveDb'
+
 
 
 export default function Form() {
-    console.log('db: ', db.items)
+   const navigate = useNavigate()
+    const dispatch = useDispatch()
     const [ input, setInput ] = useState()
     const errorRef = useRef(null);
 
     function handleOnSubmit(e){
         e.preventDefault()
-        console.log('form')
         for (let i = 0; i < db.items.length - 1; i++) {
             if(db.items[i].type !== 'submit' && db.items[i].required && input && input[db.items[i].name]){
                 console.log('cooorrecto', input[db.items[i].name])
@@ -22,7 +28,15 @@ export default function Form() {
                 return
             }
         }
-        console.log('enviando a Database')
+        console.log('enviando a Database', input) 
+        SaveDb({
+            full_name: input.full_name,
+            email: input.email,
+            birth_date: input.birth_date,
+            country_of_origin: input.country_of_origin
+        }) 
+        dispatch(getData())
+        navigate("/showdb")
  
     }
 
@@ -39,7 +53,6 @@ export default function Form() {
             aux.flat()
             e.target.value=aux[0].slice(0,50)
         } 
-        console.log('asdfasdfasdf',e.target.checked)
         if( e.target.type === 'checkbox')
             setInput({...input, [e.target.name]: e.target.checked})
         else
@@ -49,18 +62,34 @@ export default function Form() {
     function handleOnSelect(e){
         setInput({...input, [e.target.name]: e.target.value})
     }
+
+    function handleOnButton(){
+        dispatch(getData())
+        navigate("/showdb")
+    }
+
   return (
-    <form onSubmit={handleOnSubmit}>
+    <form onSubmit={handleOnSubmit} className="form">
+        <h2>Encuesta</h2>
         {db.items.map((r, i) => {
+            if(r.type === 'submit')
+                return (
+                    <div key={i}>
+                        <input type={r.type} name={r.name} onChange={handleOnChange} value={input && input[r.name]} className='submit' />
+                        <input className='submit' type='button' value='Datos' onClick={handleOnButton} />
+                        <div ref={errorRef} ></div>
+                    </div>
+                )
+            else
             if(r.type === 'select')
                 return(
                     <div key = {i + 'a'}>
                         <label>{r.label}</label>
-                        <select onChange={handleOnSelect} name={r.name}>
+                        <select onChange={handleOnSelect} name={r.name} className='select' >
                             <option value='Seleccione un pais'>Seleccione un pais</option>
                             {
                                 r.options.map((r2, i) => 
-                                    <option key={i} value={r2.value}>{r2.label}</option>
+                                    <option key={i} value={r2.value} className='option'>{r2.label}</option>
                                 )
                             }
                         </select>
@@ -70,7 +99,7 @@ export default function Form() {
                 return (
                     <div key={i}>
                         <label>{r.label} </label>
-                        <input type={r.type} name={r.name} onChange={handleOnChange} value={input && input[r.name]}/>
+                        <input type={r.type} name={r.name} onChange={handleOnChange} value={input && input[r.name]} className='input' />
                         <div ref={errorRef} ></div>
                     </div>
                     )
