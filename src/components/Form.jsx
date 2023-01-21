@@ -23,7 +23,7 @@ export default function Form() {
             }
             if(db.items[i].type !== 'submit' && db.items[i].required && input && input[db.items[i].name] === 'on')
                 console.log('cooorrecto', db.items[i].name)
-            else {
+            if(db.items[i].required && !input[db.items[i].name]){
                 errorRef.current.innerHTML = `Faltan ingresar ${db.items[i].label}`
                 return
             }
