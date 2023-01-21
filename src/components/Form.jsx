@@ -44,7 +44,7 @@ export default function Form() {
         let aux = []
          if(e.target.type === 'text'){
             if(!/[a-zA-ZñÑ´' ]+/gi.test(e.target.value.charAt(e.target.value.length - 1)))
-                errorRef.current.innerHTML = 'Solo se permiten letras y numeros'
+                errorRef.current.innerHTML = 'Solo se permiten letras'
             else    
                 errorRef.current.innerHTML = ''
             e.target.value = e.target.value.match(/[a-zA-ZñÑ´' ]+/gi)
